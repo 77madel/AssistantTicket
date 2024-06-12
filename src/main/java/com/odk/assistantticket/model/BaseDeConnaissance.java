@@ -1,2 +1,4 @@
-package com.odk.assistantticket.model;public class BaseDeConnaissance {
+package com.odk.assistantticket.model;
+
+public class BaseDeConnaissance {
 }

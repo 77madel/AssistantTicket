@@ -1,2 +1,4 @@
-package com.odk.assistantticket.model;public class Utilisateur {
+package com.odk.assistantticket.model;
+
+public class Utilisateur {
 }

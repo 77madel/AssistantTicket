@@ -1,2 +1,4 @@
-package com.odk.assistantticket.model;public class Role {
+package com.odk.assistantticket.model;
+
+public class Role {
 }
