@@ -22,7 +22,7 @@ public class Utilisateur implements UserDetails {
     private String name;
     private String email;
     private String password;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     private Role role;
 
     @Override

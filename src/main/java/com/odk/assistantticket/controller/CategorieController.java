@@ -19,30 +19,33 @@ public class CategorieController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     @GetMapping
     public Iterable<Categorie> ListAllCategories() {
+
         return categorieService.getAllCategories();
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public void creerCategorie(@RequestBody Categorie categorie) {
+    public void créerCategorie(@RequestBody Categorie categorie) {
+
         categorieService.save(categorie);
     }
 
-//    @ResponseStatus(HttpStatus.ACCEPTED)
-//    @GetMapping
-//    public Optional<Categorie> CategorieById(long id) {
-//        return categorieService.getCategorieById(id);
-//    }
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @GetMapping({"/id"})
+    public Optional<Categorie> CategorieById(@PathVariable long id) {
+        return categorieService.getCategorieById(id);
+    }
 
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @PutMapping
-    public void modifierCategorie(@RequestBody Categorie categorie) {
+    @PutMapping({"/id"})
+    public void modifierCategorie(@PathVariable long id, @RequestBody Categorie categorie) {
         categorieService.save(categorie);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping
-    public void supprimerCategorie(long id) {
+    @DeleteMapping({"/id"})
+    public void supprimerCategorie(@PathVariable long id) {
+
         categorieService.deleteCategorie(id);
     }
 

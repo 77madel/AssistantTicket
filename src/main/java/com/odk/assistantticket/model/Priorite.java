@@ -17,6 +17,6 @@ public class Priorite {
     private Long id;
     @Enumerated(EnumType.STRING)
     private TypePriorite name;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Utilisateur utilisateur;
 }

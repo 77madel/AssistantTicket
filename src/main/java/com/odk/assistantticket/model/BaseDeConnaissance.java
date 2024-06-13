@@ -17,6 +17,6 @@ public class BaseDeConnaissance {
     private Long id;
     private String name;
     private String link;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Utilisateur utilisateur;
 }

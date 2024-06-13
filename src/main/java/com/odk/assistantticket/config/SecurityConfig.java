@@ -1,8 +1,9 @@
 package com.odk.assistantticket.config;
 
-import lombok.AllArgsConstructor;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -15,7 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.*;
 
 
 @Configuration
@@ -38,7 +39,16 @@ public class SecurityConfig {
                         authorize
                                 .requestMatchers(POST, "/inscription").permitAll()
                                 .requestMatchers(POST, "/connexion").permitAll()
-                                .requestMatchers(POST, "/categorie").permitAll()
+                                .requestMatchers(GET, "/deconnexion").permitAll()
+                                .requestMatchers(POST,"/categorie").permitAll()
+                                //.requestMatchers(POST,"/priorite").permitAll()
+                                .requestMatchers(POST,"/ticket").permitAll()
+                                .requestMatchers(POST,"/notification").permitAll()
+                                .requestMatchers(GET,"/notification").permitAll()
+                                .requestMatchers(POST,"/basedeconnaissance").permitAll()
+                                .requestMatchers(GET,"/ticket").permitAll()
+                                .requestMatchers(GET,"/priorite").permitAll()
+                                .requestMatchers(GET, "/categorie/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                         .sessionManagement(httpSecuritySessionManagementConfigurer ->

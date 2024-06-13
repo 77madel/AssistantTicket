@@ -22,14 +22,13 @@ public class Ticket {
     private Long id;
     private String title;
     private String content;
-    @Column(nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'EN_COURS'")
     private TypeStatus status;
     private Date createDate = new Date();
-    private Date resoluDate = new Date();
-    @OneToOne(cascade = CascadeType.ALL)
+    private Date resoluDate;
+    @OneToOne(cascade = CascadeType.MERGE)
     private Categorie categorie;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     private Priorite priorite;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Utilisateur utilisateur;
 }

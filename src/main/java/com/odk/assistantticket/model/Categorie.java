@@ -17,6 +17,6 @@ public class Categorie {
     private Long id;
     @Enumerated(EnumType.STRING)
     private TypeCategorie name;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Utilisateur utilisateur;
 }

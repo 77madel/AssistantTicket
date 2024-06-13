@@ -18,7 +18,7 @@ public class Notification {
     private Long id;
     private String content;
     private Date DateEnvoie = new Date();
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Ticket ticket;
 
 }

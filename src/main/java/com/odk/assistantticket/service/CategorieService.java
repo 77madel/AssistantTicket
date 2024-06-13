@@ -14,22 +14,27 @@ public class CategorieService {
     private CategorieRepository categorieRepository;
 
     public Iterable<Categorie> getAllCategories() {
+
         return categorieRepository.findAll();
     }
 
     public void save(Categorie categorie) {
+
         categorieRepository.save(categorie);
     }
 
     public Optional<Categorie> getCategorieById(long id) {
+
         return categorieRepository.findById(id);
     }
 
     public void updateCategorie(Categorie categorie) {
+
         categorieRepository.save(categorie);
     }
 
     public void deleteCategorie(long id) {
+
         categorieRepository.deleteById(id);
     }
 }
