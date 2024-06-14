@@ -22,6 +22,7 @@ public class PrioriteController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public void Add(@RequestBody Priorite priorite) {
+
         priorityService.AddPriorite(priorite);
     }
 }

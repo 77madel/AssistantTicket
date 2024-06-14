@@ -1,5 +1,6 @@
 package com.odk.assistantticket.controller;
 
+import com.odk.assistantticket.config.JwtService;
 import com.odk.assistantticket.dto.AuthentificationDTO;
 import com.odk.assistantticket.model.Utilisateur;
 import com.odk.assistantticket.service.UtilisateurService;
@@ -16,6 +17,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Slf4j
 @RestController
 @RequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -23,24 +26,28 @@ public class UtilisateurController {
 
     private final UtilisateurService utilisateurService;
     private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
-    public UtilisateurController(UtilisateurService utilisateurService, AuthenticationManager authenticationManager) {
+    public UtilisateurController(UtilisateurService utilisateurService, AuthenticationManager authenticationManager, JwtService jwtService) {
         this.utilisateurService = utilisateurService;
         this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/inscription")
     public void inscriptionUtilisateur(@RequestBody Utilisateur utilisateur) {
-        log.info("Inscription");
-        utilisateurService.inscription(utilisateur);
+        this.utilisateurService.inscription(utilisateur);
     }
 
     @PostMapping(path = "connexion")
-    public String connexion(@RequestBody AuthentificationDTO authentificationDTO) {
+    public Map<String, String> connexion(@RequestBody AuthentificationDTO authentificationDTO) {
         final Authentication authenticate = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authentificationDTO.username(), authentificationDTO.password())
-        );
 
+        );
+        if(authenticate.isAuthenticated()) {
+            return this.jwtService.generate(authentificationDTO.username());
+        }
         return null;
     }
 

@@ -15,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.http.HttpMethod.*;
 
@@ -31,7 +32,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFilter jwtFilter) throws Exception {
         return
                 httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
@@ -39,21 +40,22 @@ public class SecurityConfig {
                         authorize
                                 .requestMatchers(POST, "/inscription").permitAll()
                                 .requestMatchers(POST, "/connexion").permitAll()
-                                .requestMatchers(GET, "/deconnexion").permitAll()
-                                .requestMatchers(POST,"/categorie").permitAll()
-                                //.requestMatchers(POST,"/priorite").permitAll()
-                                .requestMatchers(POST,"/ticket").permitAll()
-                                .requestMatchers(POST,"/notification").permitAll()
-                                .requestMatchers(GET,"/notification").permitAll()
-                                .requestMatchers(POST,"/basedeconnaissance").permitAll()
-                                .requestMatchers(GET,"/ticket").permitAll()
-                                .requestMatchers(GET,"/priorite").permitAll()
-                                .requestMatchers(GET, "/categorie/**").permitAll()
+//                                .requestMatchers(POST,"/categorie").permitAll()
+//                                //.requestMatchers(POST,"/priorite").permitAll()
+//                                .requestMatchers(POST,"/ticket").permitAll()
+//                                .requestMatchers(POST,"/notification").permitAll()
+//                                .requestMatchers(GET,"/notification").permitAll()
+//                                .requestMatchers(POST,"/basedeconnaissance").permitAll()
+//                                .requestMatchers(GET,"/ticket").permitAll()
+//                                .requestMatchers(GET,"/priorite").permitAll()
+//                                .requestMatchers(GET, "/categorie/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                         .sessionManagement(httpSecuritySessionManagementConfigurer ->
                                 httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                        ).build();
+                        )
+                        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                        .build();
     }
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {

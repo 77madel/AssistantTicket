@@ -17,6 +17,6 @@ public class Categorie {
     private Long id;
     @Enumerated(EnumType.STRING)
     private TypeCategorie name;
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Utilisateur utilisateur;
 }

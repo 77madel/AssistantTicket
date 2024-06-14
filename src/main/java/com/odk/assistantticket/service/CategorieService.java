@@ -1,8 +1,10 @@
 package com.odk.assistantticket.service;
 
 import com.odk.assistantticket.model.Categorie;
+import com.odk.assistantticket.model.Utilisateur;
 import com.odk.assistantticket.repository.CategorieRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -19,7 +21,8 @@ public class CategorieService {
     }
 
     public void save(Categorie categorie) {
-
+        Utilisateur utilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        categorie.setUtilisateur(utilisateur);
         categorieRepository.save(categorie);
     }
 

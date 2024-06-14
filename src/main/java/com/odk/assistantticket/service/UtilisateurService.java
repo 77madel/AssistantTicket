@@ -44,7 +44,7 @@ public class UtilisateurService implements UserDetailsService {
         Role roleUtilisateur = new Role();
         roleUtilisateur.setLibelle(TypeRole.APPRENANT);
         utilisateur.setRole(roleUtilisateur);
-        utilisateurRepository.save(utilisateur);
+        this.utilisateurRepository.save(utilisateur);
     }
 
     @Override

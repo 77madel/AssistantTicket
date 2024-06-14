@@ -5,9 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @AllArgsConstructor
@@ -27,7 +29,7 @@ public class Utilisateur implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_"+this.role.getLibelle()));
     }
 
     @Override
@@ -42,6 +44,7 @@ public class Utilisateur implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
+
         return UserDetails.super.isAccountNonExpired();
     }
 
