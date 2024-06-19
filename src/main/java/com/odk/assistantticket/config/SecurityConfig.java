@@ -30,7 +30,7 @@ public class SecurityConfig {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userDetailsService = userDetailsService;
     }
-
+//
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFilter jwtFilter) throws Exception {
         return
@@ -40,7 +40,7 @@ public class SecurityConfig {
                         authorize
                                 .requestMatchers(POST, "/inscription").permitAll()
                                 .requestMatchers(POST, "/connexion").permitAll()
-//                                .requestMatchers(POST,"/categorie").permitAll()
+                                .requestMatchers(POST,"/categorie").hasRole("ADMINISTRATEUR")
 //                                //.requestMatchers(POST,"/priorite").permitAll()
 //                                .requestMatchers(POST,"/ticket").permitAll()
 //                                .requestMatchers(POST,"/notification").permitAll()

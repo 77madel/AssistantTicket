@@ -1,11 +1,15 @@
 package com.odk.assistantticket.controller;
 
+import com.odk.assistantticket.model.Categorie;
 import com.odk.assistantticket.model.Ticket;
 import com.odk.assistantticket.service.TicketService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @RestController
@@ -19,8 +23,29 @@ public class TicketController {
         return this.ticketService.getAllTickets();
     }
 
+    @GetMapping("/{id}")
+    public Optional<Ticket> TicketsById(@PathVariable long id) {
+        return ticketService.getTicketsById(id);
+    }
+
     @PostMapping
     public void CreateTicket(@RequestBody Ticket ticket) {
         ticketService.insertTicket(ticket);
+    }
+
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @PutMapping("/{id}")
+    public ResponseEntity<Ticket> updateCategorie(@PathVariable Long id, @RequestBody Ticket updatedTicket) {
+        Ticket ticket = ticketService.updateTicket(id, updatedTicket);
+        if (ticket != null) {
+            return ResponseEntity.ok(updatedTicket);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping("/{id}")
+    public void deleteTicket(@PathVariable long id) {
+        this.ticketService.supprimerTicket(id);
     }
 }

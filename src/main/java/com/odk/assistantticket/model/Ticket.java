@@ -25,10 +25,13 @@ public class Ticket {
     private TypeStatus status;
     private Date createDate = new Date();
     private Date resoluDate;
-    @OneToOne(cascade = CascadeType.MERGE)
+    @OneToOne
+    @JoinColumn(name = "categorie_id")
     private Categorie categorie;
-    @OneToOne(cascade = CascadeType.MERGE)
+    @OneToOne
+    @JoinColumn(name = "priorite_id")
     private Priorite priorite;
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
+    @JoinColumn(name = "utilisateur_id")
     private Utilisateur utilisateur;
 }

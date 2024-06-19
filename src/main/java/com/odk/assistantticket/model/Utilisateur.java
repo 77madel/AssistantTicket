@@ -17,17 +17,18 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "users")
-public class Utilisateur implements UserDetails {
+//
+public class Utilisateur implements UserDetails{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
     private String name;
     private String email;
     private String password;
-    @OneToOne(cascade = CascadeType.MERGE)
+    @OneToOne(cascade = CascadeType.ALL)
     private Role role;
 
-    @Override
+   @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_"+this.role.getLibelle()));
     }

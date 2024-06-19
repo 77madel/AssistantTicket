@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,7 +32,7 @@ public class UtilisateurController {
     public UtilisateurController(UtilisateurService utilisateurService, AuthenticationManager authenticationManager, JwtService jwtService) {
         this.utilisateurService = utilisateurService;
         this.authenticationManager = authenticationManager;
-        this.jwtService = jwtService;
+       this.jwtService = jwtService;
     }
 
     @PostMapping("/inscription")
@@ -39,6 +40,7 @@ public class UtilisateurController {
         this.utilisateurService.inscription(utilisateur);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping(path = "connexion")
     public Map<String, String> connexion(@RequestBody AuthentificationDTO authentificationDTO) {
         final Authentication authenticate = authenticationManager.authenticate(
@@ -51,12 +53,12 @@ public class UtilisateurController {
         return null;
     }
 
-    @GetMapping("/deconnexion")
+   /* @GetMapping("/deconnexion")
     public ResponseEntity<String> deconnexion(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
         return ResponseEntity.ok("Déconnexion réussie");
-    }
+    }*/
 }

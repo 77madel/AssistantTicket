@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,10 +17,12 @@ import java.util.Optional;
 
 @AllArgsConstructor
 @Service
+//
 public class UtilisateurService implements UserDetailsService {
 
     private UtilisateurRepository utilisateurRepository;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public Iterable<Utilisateur> listUtilisateur() {
         return utilisateurRepository.findAll();
@@ -47,7 +50,7 @@ public class UtilisateurService implements UserDetailsService {
         this.utilisateurRepository.save(utilisateur);
     }
 
-    @Override
+   @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return this.utilisateurRepository
                 .findByEmail(username)
