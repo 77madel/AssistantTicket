@@ -4,14 +4,15 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.lang.reflect.Array;
+import java.util.*;
 
+@Slf4j
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -28,10 +29,11 @@ public class Utilisateur implements UserDetails{
     @OneToOne(cascade = CascadeType.ALL)
     private Role role;
 
+
    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_"+this.role.getLibelle()));
-    }
+   public Collection<? extends GrantedAuthority> getAuthorities() {
+       return (Collections.singletonList(new SimpleGrantedAuthority("ROLE_"+this.role.getLibelle())));
+   }
 
     @Override
     public String getUsername() {
@@ -46,21 +48,21 @@ public class Utilisateur implements UserDetails{
     @Override
     public boolean isAccountNonExpired() {
 
-        return UserDetails.super.isAccountNonExpired();
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return true;
     }
 }

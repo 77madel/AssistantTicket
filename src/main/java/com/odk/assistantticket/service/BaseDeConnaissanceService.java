@@ -6,6 +6,8 @@ import com.odk.assistantticket.model.Utilisateur;
 import com.odk.assistantticket.repository.BaseDeConnaissanceRepository;
 import com.odk.assistantticket.repository.UtilisateurRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +29,11 @@ public class BaseDeConnaissanceService {
     }
 
     public void insertBaseDeConnaissance(BaseDeConnaissance baseDeConnaissance) {
+        // Récupère l'utilisateur authentifié
+        Utilisateur  utilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        baseDeConnaissance.setUtilisateur(utilisateur);
+
+        baseDeConnaissance.setUtilisateur(utilisateur);
         baseDeConnaissanceRepository.save(baseDeConnaissance);
     }
 

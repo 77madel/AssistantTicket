@@ -25,11 +25,10 @@ public class CategorieController {
         return categorieService.getAllCategories();
     }
 
-    @PreAuthorize("hasRole('ADMINISTARTEUR')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public void créerCategorie(@RequestBody Categorie categorie) {
-
         categorieService.save(categorie);
     }
 

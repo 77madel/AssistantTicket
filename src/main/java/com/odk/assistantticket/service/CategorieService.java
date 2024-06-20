@@ -5,7 +5,9 @@ import com.odk.assistantticket.model.Utilisateur;
 import com.odk.assistantticket.repository.CategorieRepository;
 import com.odk.assistantticket.repository.UtilisateurRepository;
 import lombok.AllArgsConstructor;
-//import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +28,11 @@ public class CategorieService {
 
     //Ajouté Categorie
     public void save(Categorie categorie) {
-        //Utilisateur utilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-       // categorie.setUtilisateur(utilisateur);
+        // Récupère l'utilisateur authentifié
+      //  Utilisateur  utilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //categorie.setUtilisateur(utilisateur);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
         categorieRepository.save(categorie);
     }
 

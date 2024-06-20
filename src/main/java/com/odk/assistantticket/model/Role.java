@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Optional;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -17,4 +19,5 @@ public class Role {
     private Long id;
     @Enumerated(EnumType.STRING)
     private TypeRole libelle;
+
 }

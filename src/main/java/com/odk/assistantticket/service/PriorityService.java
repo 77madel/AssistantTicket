@@ -6,7 +6,7 @@ import com.odk.assistantticket.model.Utilisateur;
 import com.odk.assistantticket.repository.PrioriteRepository;
 import com.odk.assistantticket.repository.UtilisateurRepository;
 import lombok.AllArgsConstructor;
-//import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -24,8 +24,8 @@ public class PriorityService {
     }
 
     public void AddPriorite(Priorite priorite) {
-        //Utilisateur  utilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-       // priorite.setUtilisateur(utilisateur);
+        Utilisateur  utilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        priorite.setUtilisateur(utilisateur);
         prioriteRepository.save(priorite);
     }
 

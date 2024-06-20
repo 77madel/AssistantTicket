@@ -20,4 +20,5 @@ public class Categorie {
     @ManyToOne
     @JoinColumn(name = "utilisateur_id")
     private Utilisateur utilisateur;
+
 }

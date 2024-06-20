@@ -1,12 +1,14 @@
 package com.odk.assistantticket.config;
 
 
+
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -15,57 +17,87 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.http.HttpMethod.*;
 
 
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfig {
+
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserDetailsService userDetailsService;
 
-    public SecurityConfig(BCryptPasswordEncoder bCryptPasswordEncoder, UserDetailsService userDetailsService) {
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.userDetailsService = userDetailsService;
-    }
-//
+//JwtFilter jwtFilter
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFilter jwtFilter) throws Exception {
-        return
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
                 httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize ->
-                        authorize
-                                .requestMatchers(POST, "/inscription").permitAll()
-                                .requestMatchers(POST, "/connexion").permitAll()
-                                .requestMatchers(POST,"/categorie").hasRole("ADMINISTRATEUR")
-//                                //.requestMatchers(POST,"/priorite").permitAll()
-//                                .requestMatchers(POST,"/ticket").permitAll()
-//                                .requestMatchers(POST,"/notification").permitAll()
-//                                .requestMatchers(GET,"/notification").permitAll()
-//                                .requestMatchers(POST,"/basedeconnaissance").permitAll()
-//                                .requestMatchers(GET,"/ticket").permitAll()
-//                                .requestMatchers(GET,"/priorite").permitAll()
-//                                .requestMatchers(GET, "/categorie/**").permitAll()
-                                .anyRequest().authenticated()
-                )
-                        .sessionManagement(httpSecuritySessionManagementConfigurer ->
-                                httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        .authorizeHttpRequests(auth ->{
+                            auth.requestMatchers(POST,"/categorie").hasRole("ADMIN");
+                            auth.anyRequest().authenticated();
+                                }
                         )
-                        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                        .build();
+                        .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        .csrf(csrf -> csrf.disable())
+                        .httpBasic(httpBasic -> httpBasic.realmName("AssistantTicket")
+                        );
+
+                return httpSecurity.build();
     }
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-    @Bean
+
+   @Bean
     public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(userDetailsService);
         daoAuthenticationProvider.setPasswordEncoder(bCryptPasswordEncoder);
         return daoAuthenticationProvider;
     }
+
+
 }
+
+
+
+
+
+
+
+
+/*public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    httpSecurity
+            .csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(authorize ->
+                            authorize
+                                    .requestMatchers(POST, "/inscription").permitAll()
+                                    .requestMatchers(POST, "/connexion").permitAll()
+                                    .requestMatchers(POST,"/categorie").hasRole("ADMINISTRATEUR")
+//                                //.requestMatchers(POST,"/priorite").permitAll()
+//                                .requestMatchers(POST,"/ticket").permitAll()
+//                                .requestMatchers(POST,"/notification").permitAll()
+//                                .requestMatchers(GET,"/notification").permitAll()
+                                    .requestMatchers(POST,"/basedeconnaissance").hasRole("ADMINISTRATEUR")
+//                                .requestMatchers(GET,"/ticket").permitAll()
+//                                .requestMatchers(GET,"/priorite").permitAll()
+//                                .requestMatchers(GET, "/categorie/**").permitAll()
+                                    .anyRequest().authenticated()
+            )
+            .sessionManagement(httpSecuritySessionManagementConfigurer ->
+                    httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            //.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+            .httpBasic(Customizer.withDefaults());
+    return httpSecurity.build();
+}
+*/
+
+
+
+
+
+
+

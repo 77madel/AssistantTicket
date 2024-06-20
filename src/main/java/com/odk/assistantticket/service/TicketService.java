@@ -10,6 +10,7 @@ import com.odk.assistantticket.repository.PrioriteRepository;
 import com.odk.assistantticket.repository.TicketRepository;
 import com.odk.assistantticket.repository.UtilisateurRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +34,9 @@ public class TicketService {
     }
 
     public void insertTicket(Ticket ticket) {
+        // Récupère l'utilisateur authentifié
+        Utilisateur  utilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ticket.setUtilisateur(utilisateur);
         this.ticketRepository.save(ticket);
     }
 

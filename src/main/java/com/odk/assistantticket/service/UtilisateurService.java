@@ -5,6 +5,7 @@ import com.odk.assistantticket.model.Role;
 import com.odk.assistantticket.model.Utilisateur;
 import com.odk.assistantticket.repository.UtilisateurRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -37,7 +38,7 @@ public class UtilisateurService implements UserDetailsService {
             throw new RuntimeException("Votre email est invalide");
         }
 
-        Optional<Utilisateur> utilisateurOptional = this.utilisateurRepository.findByEmail(utilisateur.getEmail());
+        Optional<Utilisateur> utilisateurOptional = Optional.ofNullable(this.utilisateurRepository.findByEmail(utilisateur.getEmail()));
         if (utilisateurOptional.isPresent()){
             throw new RuntimeException("Votre mail est déja utilisé");
         }
@@ -45,15 +46,17 @@ public class UtilisateurService implements UserDetailsService {
         utilisateur.setPassword(mdpCrypte);
 
         Role roleUtilisateur = new Role();
-        roleUtilisateur.setLibelle(TypeRole.APPRENANT);
+        roleUtilisateur.setLibelle(TypeRole.ADMIN);
         utilisateur.setRole(roleUtilisateur);
         this.utilisateurRepository.save(utilisateur);
     }
 
-   @Override
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return this.utilisateurRepository
-                .findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Aucun utilisateur ne corespond a cet identifiant"));
+        Utilisateur utilisateur = utilisateurRepository.findByEmail(username);
+        if (utilisateur == null) {
+            throw new UsernameNotFoundException("Utilisateur non trouvé : " + username);
+        }
+        return utilisateur;
     }
 }

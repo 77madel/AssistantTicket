@@ -1,64 +1,57 @@
 package com.odk.assistantticket.controller;
 
-import com.odk.assistantticket.config.JwtService;
 import com.odk.assistantticket.dto.AuthentificationDTO;
 import com.odk.assistantticket.model.Utilisateur;
 import com.odk.assistantticket.service.UtilisateurService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 
-@Slf4j
 @RestController
-@RequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+//@RequestMapping("/api/utilisateurs")
+@AllArgsConstructor
 public class UtilisateurController {
 
     private final UtilisateurService utilisateurService;
     private final AuthenticationManager authenticationManager;
-    private final JwtService jwtService;
-
-    public UtilisateurController(UtilisateurService utilisateurService, AuthenticationManager authenticationManager, JwtService jwtService) {
-        this.utilisateurService = utilisateurService;
-        this.authenticationManager = authenticationManager;
-       this.jwtService = jwtService;
-    }
 
     @PostMapping("/inscription")
-    public void inscriptionUtilisateur(@RequestBody Utilisateur utilisateur) {
-        this.utilisateurService.inscription(utilisateur);
+    public ResponseEntity<String> inscriptionUtilisateur(@RequestBody Utilisateur utilisateur) {
+        utilisateurService.inscription(utilisateur);
+        return ResponseEntity.ok("Utilisateur inscrit avec succès !");
     }
 
-    @ResponseStatus(HttpStatus.OK)
-    @PostMapping(path = "connexion")
-    public Map<String, String> connexion(@RequestBody AuthentificationDTO authentificationDTO) {
-        final Authentication authenticate = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authentificationDTO.username(), authentificationDTO.password())
-
-        );
-        if(authenticate.isAuthenticated()) {
-            return this.jwtService.generate(authentificationDTO.username());
+    @PostMapping("/connexion")
+    public ResponseEntity<String> connexion(@RequestBody AuthentificationDTO authentificationDTO) {
+        try {
+            Authentication authenticate = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authentificationDTO.username(), authentificationDTO.password())
+            );
+            SecurityContextHolder.getContext().setAuthentication(authenticate);
+            return ResponseEntity.ok("Connexion réussie !");
+        } catch (BadCredentialsException ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Nom d'utilisateur ou mot de passe incorrect");
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur s'est produite lors de l'authentification");
         }
-        return null;
     }
 
-   /* @GetMapping("/deconnexion")
+    @GetMapping("/deconnexion")
     public ResponseEntity<String> deconnexion(HttpServletRequest request, HttpServletResponse response) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null) {
-            new SecurityContextLogoutHandler().logout(request, response, auth);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            new SecurityContextLogoutHandler().logout(request, response, authentication);
         }
-        return ResponseEntity.ok("Déconnexion réussie");
-    }*/
+        return ResponseEntity.ok("Déconnexion réussie !");
+    }
 }
