@@ -22,4 +22,8 @@ public class Notification {
     @JoinColumn(name = "ticket_id")
     private Ticket ticket;
 
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @JoinColumn(name = "utilisateur_id")
+    private Utilisateur utilisateur;
+
 }

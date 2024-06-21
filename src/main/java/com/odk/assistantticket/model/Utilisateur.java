@@ -29,6 +29,9 @@ public class Utilisateur implements UserDetails{
     @OneToOne(cascade = CascadeType.ALL)
     private Role role;
 
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE})
+    private Utilisateur utilisateur;
+
 
    @Override
    public Collection<? extends GrantedAuthority> getAuthorities() {

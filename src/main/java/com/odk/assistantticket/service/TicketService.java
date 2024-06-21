@@ -1,10 +1,8 @@
 package com.odk.assistantticket.service;
 
 
-import com.odk.assistantticket.model.Categorie;
-import com.odk.assistantticket.model.Priorite;
-import com.odk.assistantticket.model.Ticket;
-import com.odk.assistantticket.model.Utilisateur;
+import com.odk.assistantticket.enums.TypeRole;
+import com.odk.assistantticket.model.*;
 import com.odk.assistantticket.repository.CategorieRepository;
 import com.odk.assistantticket.repository.PrioriteRepository;
 import com.odk.assistantticket.repository.TicketRepository;
@@ -13,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +23,7 @@ public class TicketService {
     private UtilisateurRepository utilisateurRepository;
     private CategorieRepository categorieRepository;
     private PrioriteRepository prioriteRepository;
+    private NotificationService notificationService;
 
     public List<Ticket> getAllTickets() {
         return (List<Ticket>) ticketRepository.findAll();
@@ -35,9 +35,24 @@ public class TicketService {
 
     public void insertTicket(Ticket ticket) {
         // Récupère l'utilisateur authentifié
-        Utilisateur  utilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Utilisateur utilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ticket.setUtilisateur(utilisateur);
-        this.ticketRepository.save(ticket);
+
+        Ticket savedTicket = ticketRepository.save(ticket);
+
+        // Créer une notification pour le ticket sans utilisateur spécifié
+        createNotificationForUser(savedTicket, "Nouveau ticket créé : ");
+    }
+
+    private void createNotificationForUser(Ticket ticket, String content) {
+        Notification notification = new Notification();
+        notification.setContent("Nouveau ticket créé");
+        notification.setDateEnvoie(new Date());
+        notification.setTicket(ticket);
+        // Récupère l'utilisateur authentifié
+        Utilisateur utilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        notification.setUtilisateur(utilisateur);
+        notificationService.insertNotification(notification);
     }
 
 
