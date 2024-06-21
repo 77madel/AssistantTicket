@@ -46,7 +46,7 @@ public class TicketService {
 
     private void createNotificationForUser(Ticket ticket, String content) {
         Notification notification = new Notification();
-        notification.setContent("Nouveau ticket créé");
+        notification.setContent(content);
         notification.setDateEnvoie(new Date());
         notification.setTicket(ticket);
         // Récupère l'utilisateur authentifié

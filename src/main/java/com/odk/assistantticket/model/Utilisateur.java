@@ -9,7 +9,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 @Slf4j
@@ -28,9 +27,6 @@ public class Utilisateur implements UserDetails{
     private String password;
     @OneToOne(cascade = CascadeType.ALL)
     private Role role;
-
-    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE})
-    private Utilisateur utilisateur;
 
 
    @Override

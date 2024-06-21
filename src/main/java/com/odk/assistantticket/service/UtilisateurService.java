@@ -3,6 +3,7 @@ package com.odk.assistantticket.service;
 import com.odk.assistantticket.enums.TypeRole;
 import com.odk.assistantticket.model.Role;
 import com.odk.assistantticket.model.Utilisateur;
+import com.odk.assistantticket.repository.RoleRepository;
 import com.odk.assistantticket.repository.UtilisateurRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.User;
@@ -21,6 +22,7 @@ import java.util.Optional;
 //
 public class UtilisateurService implements UserDetailsService {
 
+    private final RoleRepository roleRepository;
     private UtilisateurRepository utilisateurRepository;
 
      private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -45,10 +47,12 @@ public class UtilisateurService implements UserDetailsService {
         String mdpCrypte = this.bCryptPasswordEncoder.encode(utilisateur.getPassword());
         utilisateur.setPassword(mdpCrypte);
 
-        Role roleUtilisateur = new Role();
-        roleUtilisateur.setLibelle(TypeRole.ADMIN);
-        utilisateur.setRole(roleUtilisateur);
-        this.utilisateurRepository.save(utilisateur);
+       Long roleId = utilisateur.getRole().getId();
+        System.out.println(roleId);
+       //Role role =  roleRepository.findByLibelle(String.valueOf(roleId));
+
+       //utilisateur.setRole(role);
+       this.utilisateurRepository.save(utilisateur);
     }
 
     @Override
