@@ -33,18 +33,19 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
                 httpSecurity
                         .authorizeHttpRequests(auth ->{
-                            auth.requestMatchers(POST,"/inscription").hasRole("ADMINISTRATEUR");
-                            auth.requestMatchers(POST,"/categorie").hasRole("ADMINISTRATEUR");
+                            auth.requestMatchers(POST,"/inscription", "/role").hasRole("ADMIN");
+                            auth.requestMatchers(POST,"/categorie").hasRole("ADMIN");
                             auth.requestMatchers(POST,"/ticket").hasRole("APPRENANT");
                             auth.requestMatchers(POST,"/ticket/traiter/**").hasRole("FORMATEUR");
-                            auth.requestMatchers(GET,"/role/*").hasRole("ADMINISTRATEUR");
+                            auth.requestMatchers(GET,"/role/*").hasRole("ADMIN");
                             auth.requestMatchers(GET,"/ticket/*").permitAll();
-                            auth.requestMatchers(GET,"/utilisateur/**").hasRole("ADMINISTRATEUR");
+                            auth.requestMatchers(GET,"/utilisateur/**").hasRole("ADMIN");
                             auth.requestMatchers(DELETE,"/delete/utilisateur/*").permitAll();
-                            auth.requestMatchers(POST,"/role").hasRole("ADMINISTRATEUR");
-                            auth.requestMatchers(POST,"/priorite").hasRole("ADMINISTRATEUR");
+                            auth.requestMatchers(POST,"/role").hasRole("ADMIN");
+                            auth.requestMatchers(POST,"/priorite").hasRole("ADMIN");
                             auth.requestMatchers(DELETE,"/role/delete/**").hasRole("ADMINISTRATEUR");
                             auth.requestMatchers(PUT,"/role/*").hasRole("ADMINISTRATEUR");
+                            auth.requestMatchers(POST,"/connexion").permitAll();
 
                             auth.anyRequest().authenticated();
                         }

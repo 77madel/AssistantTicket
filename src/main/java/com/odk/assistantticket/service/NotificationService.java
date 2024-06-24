@@ -46,7 +46,7 @@ public class NotificationService {
 
         notificationRepository.save(notification);
         // Récupérer les utilisateurs avec le rôle "FORM"
-        List<Utilisateur> formateurs = utilisateurRepository.findByRoleLibelle("FORMATEUR");
+        List<Utilisateur> formateurs = utilisateurRepository.findByRoleLibelle("FORM");
 
         // Envoyer un e-mail à chaque formateur
         for (Utilisateur formateur : formateurs) {
