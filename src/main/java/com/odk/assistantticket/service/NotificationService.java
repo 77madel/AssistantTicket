@@ -40,11 +40,11 @@ public class NotificationService {
         notification.setContent(content);
         notification.setDateEnvoie(new Date());
         notification.setTicket(ticket);
-        notificationRepository.save(notification);
         // Récupère l'utilisateur authentifié
         Utilisateur utilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         notification.setUtilisateur(utilisateur);
 
+        notificationRepository.save(notification);
         // Récupérer les utilisateurs avec le rôle "FORM"
         List<Utilisateur> formateurs = utilisateurRepository.findByRoleLibelle("FORMATEUR");
 

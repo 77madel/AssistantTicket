@@ -12,9 +12,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
+import static com.odk.assistantticket.enums.TypeStatus.EN_COURS;
 
 @AllArgsConstructor
 @Service
@@ -41,11 +41,11 @@ public class TicketService {
         // Récupère l'utilisateur authentifié
         Utilisateur utilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ticket.setUtilisateur(utilisateur);
-        ticket.setStatus(TypeStatus.valueOf("OUVERT"));
+        ticket.setStatus("OUVERT");
         Ticket savedTicket = ticketRepository.save(ticket);
 
         // Créer une notification pour le ticket
-        createNotificationForUser(savedTicket, "Nouveau ticket créé" + " " + utilisateur.getName() + " " + "Veuillez consuler s'il vous plait" );
+        createNotificationForUser(savedTicket, "Nouveau ticket créé" + "par" + " " + utilisateur.getName() + " " + "Veuillez consuler s'il vous plait" );
     }
 
     private void createNotificationForUser(Ticket ticket, String content) {
@@ -107,35 +107,50 @@ public class TicketService {
         ticketRepository.delete(existingTicket);
     }
 
-    @Transactional
-    public void traiterTicket(Long id, TypeStatus status, String reponseContent) {
+
+    public void traiterTicket(Long id, String status, String reponseContent) {
         Optional<Ticket> optionalTicket = ticketRepository.findById(id);
         if (optionalTicket.isPresent()) {
             Ticket ticket = optionalTicket.get();
+            Utilisateur currentUtilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            // Vérifiez si le ticket est déjà verrouillé par un autre utilisateur
+            if (ticket.getUtilisateur() != null && !ticket.getUtilisateur().equals(currentUtilisateur)) {
+                throw new IllegalStateException("Ce ticket est déjà en cours de traitement par un autre formateur.");
+            }
+
+            // Verrouillez le ticket par l'utilisateur actuel
+            ticket.setUtilisateur(currentUtilisateur);
             ticket.setStatus(status);
             ticketRepository.save(ticket);
 
             Reponse reponse = new Reponse();
             reponse.setTicket(ticket);
-            reponse.setUtilisateur((Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+            reponse.setUtilisateur(currentUtilisateur);
             reponse.setContent(reponseContent);
             reponse.setDateReponse(new Date());
             responseRepository.save(reponse);
 
             sendNotificationEmail(ticket.getUtilisateur(), status, reponseContent);
+
+            // Déverrouillez le ticket après traitement (optionnel)
+            ticket.setUtilisateur(null);
+            ticketRepository.save(ticket);
+        } else {
+            throw new NoSuchElementException("Ticket non trouvé.");
         }
     }
 
-    private void sendNotificationEmail(Utilisateur utilisateur, TypeStatus status, String reponseContent) {
-        String subject = "Ticket " + (status == TypeStatus.EN_COURS ? "en cours" : "résolu");
-        String body = "Votre ticket a été " + (status == TypeStatus.EN_COURS ? "pris en charge" : "résolu") + ".\n\nRéponse : " + reponseContent;
+    private void sendNotificationEmail(Utilisateur utilisateur, String status, String reponseContent) {
+        String subject = "Ticket " + (status.equals("EN_COURS") ? "en cours" : "résolu");
+        String body = "Votre ticket a été " + (status.equals("RESOLU") ? "pris en charge" : "résolu") + ".\n\nRéponse : " + reponseContent;
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(utilisateur.getEmail());
         message.setSubject(subject);
         message.setText(body);
-
         mailSender.send(message);
+        emailService.sendSimpleEmail(utilisateur.getEmail(), "Statut du ticket mis à jour", "Le statut de votre ticket a été mis à jour à : " + status + "\nContenu de la réponse : " + reponseContent);
     }
 
 }

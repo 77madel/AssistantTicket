@@ -22,7 +22,7 @@ public class Ticket {
     private Long id;
     private String title;
     private String content;
-    private TypeStatus status;
+    private String status;
     private Date createDate = new Date();
     private Date resoluDate;
     @OneToOne

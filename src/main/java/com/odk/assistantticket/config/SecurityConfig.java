@@ -33,15 +33,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
                 httpSecurity
                         .authorizeHttpRequests(auth ->{
-                            auth.requestMatchers(POST,"/inscription", "/connexion").permitAll();
-                            auth.requestMatchers(POST,"/categorie").hasRole("ADMIN");
-                            auth.requestMatchers(POST,"/ticket").permitAll();
-                            auth.requestMatchers(POST,"/ticket/traiter/*").permitAll();
-                            auth.requestMatchers(GET,"/role/*").permitAll();
+                            auth.requestMatchers(POST,"/inscription").hasRole("ADMINISTRATEUR");
+                            auth.requestMatchers(POST,"/categorie").hasRole("ADMINISTRATEUR");
+                            auth.requestMatchers(POST,"/ticket").hasRole("APPRENANT");
+                            auth.requestMatchers(POST,"/ticket/traiter/**").hasRole("FORMATEUR");
+                            auth.requestMatchers(GET,"/role/*").hasRole("ADMINISTRATEUR");
                             auth.requestMatchers(GET,"/ticket/*").permitAll();
-                            auth.requestMatchers(POST,"/role").permitAll();
-                            auth.requestMatchers(DELETE,"/role/delete/**").permitAll();
-                            auth.requestMatchers(PUT,"/role/*").hasRole("ADMIN");
+                            auth.requestMatchers(POST,"/role").hasRole("ADMINISTRATEUR");
+                            auth.requestMatchers(POST,"/priorite").hasRole("ADMINISTRATEUR");
+                            auth.requestMatchers(DELETE,"/role/delete/**").hasRole("ADMINISTRATEUR");
+                            auth.requestMatchers(PUT,"/role/*").hasRole("ADMINISTRATEUR");
 
                             auth.anyRequest().authenticated();
                                 }

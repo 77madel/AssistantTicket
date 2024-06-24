@@ -25,7 +25,6 @@ public class CategorieController {
         return categorieService.getAllCategories();
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public void créerCategorie(@RequestBody Categorie categorie) {

@@ -5,6 +5,7 @@ import com.odk.assistantticket.model.Categorie;
 import com.odk.assistantticket.model.Ticket;
 import com.odk.assistantticket.service.TicketService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,7 +54,7 @@ public class TicketController {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("traiter/{id}")
-    public void traiterTicket(@PathVariable Long id, @RequestBody TypeStatus status, @RequestBody String reponseContent) {
+    public void traiterTicket(@PathVariable Long id, @RequestParam("status") String status, @RequestParam("reponseContent") String reponseContent) {
         ticketService.traiterTicket(id, status, reponseContent);
     }
 }
