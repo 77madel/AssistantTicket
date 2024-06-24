@@ -27,6 +27,17 @@ public class UtilisateurService implements UserDetailsService {
         return utilisateurRepository.findAll();
     }
 
+    public Optional<Utilisateur> utilisateurById(int id) {
+        return utilisateurRepository.findById(id);
+    }
+
+    public void supprimerUtilisateur(int id) {
+        Utilisateur existUtilisateur = utilisateurRepository.findById(id).orElse(null);
+        if (existUtilisateur != null) {
+            utilisateurRepository.delete(existUtilisateur);
+        }
+    }
+
     public void inscription(Utilisateur utilisateur) {
 
         if (!utilisateur.getEmail().contains("@")){
@@ -43,9 +54,16 @@ public class UtilisateurService implements UserDetailsService {
         String mdpCrypte = this.bCryptPasswordEncoder.encode(utilisateur.getPassword());
         utilisateur.setPassword(mdpCrypte);
 
-       Long roleId = utilisateur.getRole().getId();
-       Role role =  roleRepository.findByLibelle(String.valueOf(roleId));
-       utilisateur.setRole(role);
+        // Récupérer le rôle par son libellé (nom)
+        String roleName = utilisateur.getRole().getLibelle();
+        Role role = roleRepository.findByLibelle(roleName);
+
+        if (role == null) {
+            throw new IllegalArgumentException("Le rôle spécifié n'existe pas");
+        }
+
+        // Associer le rôle à l'utilisateur
+        utilisateur.setRole(role);
        this.utilisateurRepository.save(utilisateur);
     }
 

@@ -16,6 +16,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 
 @RestController
 //@RequestMapping("/api/utilisateurs")
@@ -29,6 +31,24 @@ public class UtilisateurController {
     public ResponseEntity<String> inscriptionUtilisateur(@RequestBody Utilisateur utilisateur) {
         utilisateurService.inscription(utilisateur);
         return ResponseEntity.ok("Utilisateur inscrit avec succès !");
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/utilisateur")
+    public Iterable<Utilisateur> AllUtilisateurs() {
+        return utilisateurService.listUtilisateur();
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/utilisateur/{id}")
+    public Optional<Utilisateur> utilisateursById(@PathVariable int id) {
+        return utilisateurService.utilisateurById(id);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping("/delete/utilisateur/{id}")
+    public void utilisateurSupprimer(@PathVariable int id) {
+        utilisateurService.supprimerUtilisateur(id);
     }
 
     @PostMapping("/connexion")

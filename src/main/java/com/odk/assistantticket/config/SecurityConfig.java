@@ -39,13 +39,15 @@ public class SecurityConfig {
                             auth.requestMatchers(POST,"/ticket/traiter/**").hasRole("FORMATEUR");
                             auth.requestMatchers(GET,"/role/*").hasRole("ADMINISTRATEUR");
                             auth.requestMatchers(GET,"/ticket/*").permitAll();
+                            auth.requestMatchers(GET,"/utilisateur/**").hasRole("ADMINISTRATEUR");
+                            auth.requestMatchers(DELETE,"/delete/utilisateur/*").permitAll();
                             auth.requestMatchers(POST,"/role").hasRole("ADMINISTRATEUR");
                             auth.requestMatchers(POST,"/priorite").hasRole("ADMINISTRATEUR");
                             auth.requestMatchers(DELETE,"/role/delete/**").hasRole("ADMINISTRATEUR");
                             auth.requestMatchers(PUT,"/role/*").hasRole("ADMINISTRATEUR");
 
                             auth.anyRequest().authenticated();
-                                }
+                        }
                         )
                         .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                         .csrf(AbstractHttpConfigurer::disable)
