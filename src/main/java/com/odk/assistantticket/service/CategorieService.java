@@ -29,10 +29,8 @@ public class CategorieService {
     //Ajouté Categorie
     public void save(Categorie categorie) {
         // Récupère l'utilisateur authentifié
-      //  Utilisateur  utilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        //categorie.setUtilisateur(utilisateur);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+        Utilisateur  utilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        categorie.setUtilisateur(utilisateur);
         categorieRepository.save(categorie);
     }
 

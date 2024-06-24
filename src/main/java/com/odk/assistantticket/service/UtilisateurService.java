@@ -1,20 +1,16 @@
 package com.odk.assistantticket.service;
 
-import com.odk.assistantticket.enums.TypeRole;
 import com.odk.assistantticket.model.Role;
 import com.odk.assistantticket.model.Utilisateur;
 import com.odk.assistantticket.repository.RoleRepository;
 import com.odk.assistantticket.repository.UtilisateurRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -48,10 +44,8 @@ public class UtilisateurService implements UserDetailsService {
         utilisateur.setPassword(mdpCrypte);
 
        Long roleId = utilisateur.getRole().getId();
-        System.out.println(roleId);
-       //Role role =  roleRepository.findByLibelle(String.valueOf(roleId));
-
-       //utilisateur.setRole(role);
+       Role role =  roleRepository.findByLibelle(String.valueOf(roleId));
+       utilisateur.setRole(role);
        this.utilisateurRepository.save(utilisateur);
     }
 

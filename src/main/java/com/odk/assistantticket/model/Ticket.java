@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,5 +34,7 @@ public class Ticket {
     @ManyToOne
     @JoinColumn(name = "utilisateur_id")
     private Utilisateur utilisateur;
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
+    private List<Reponse> reponses;
 
 }

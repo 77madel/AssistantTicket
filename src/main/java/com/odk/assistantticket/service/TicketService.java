@@ -1,16 +1,17 @@
 package com.odk.assistantticket.service;
 
 
-import com.odk.assistantticket.enums.TypeRole;
+import com.odk.assistantticket.enums.TypeStatus;
 import com.odk.assistantticket.model.*;
-import com.odk.assistantticket.repository.CategorieRepository;
-import com.odk.assistantticket.repository.PrioriteRepository;
-import com.odk.assistantticket.repository.TicketRepository;
-import com.odk.assistantticket.repository.UtilisateurRepository;
+import com.odk.assistantticket.repository.*;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -19,11 +20,14 @@ import java.util.Optional;
 @Service
 public class TicketService {
 
+    private final JavaMailSenderImpl mailSender;
     private TicketRepository ticketRepository;
     private UtilisateurRepository utilisateurRepository;
     private CategorieRepository categorieRepository;
     private PrioriteRepository prioriteRepository;
     private NotificationService notificationService;
+    private ReponseRepository responseRepository;
+    private EmailService emailService;
 
     public List<Ticket> getAllTickets() {
         return (List<Ticket>) ticketRepository.findAll();
@@ -37,11 +41,11 @@ public class TicketService {
         // Récupère l'utilisateur authentifié
         Utilisateur utilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ticket.setUtilisateur(utilisateur);
-
+        ticket.setStatus(TypeStatus.valueOf("OUVERT"));
         Ticket savedTicket = ticketRepository.save(ticket);
 
-        // Créer une notification pour le ticket sans utilisateur spécifié
-        createNotificationForUser(savedTicket, "Nouveau ticket créé : ");
+        // Créer une notification pour le ticket
+        createNotificationForUser(savedTicket, "Nouveau ticket créé" + " " + utilisateur.getName() + " " + "Veuillez consuler s'il vous plait" );
     }
 
     private void createNotificationForUser(Ticket ticket, String content) {
@@ -52,7 +56,7 @@ public class TicketService {
         // Récupère l'utilisateur authentifié
         Utilisateur utilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         notification.setUtilisateur(utilisateur);
-        notificationService.insertNotification(notification);
+        notificationService.insertNotification(ticket, content);
     }
 
 
@@ -102,4 +106,36 @@ public class TicketService {
                 .orElseThrow(() -> new RuntimeException("Ticket non trouvé: " + id));
         ticketRepository.delete(existingTicket);
     }
+
+    @Transactional
+    public void traiterTicket(Long id, TypeStatus status, String reponseContent) {
+        Optional<Ticket> optionalTicket = ticketRepository.findById(id);
+        if (optionalTicket.isPresent()) {
+            Ticket ticket = optionalTicket.get();
+            ticket.setStatus(status);
+            ticketRepository.save(ticket);
+
+            Reponse reponse = new Reponse();
+            reponse.setTicket(ticket);
+            reponse.setUtilisateur((Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+            reponse.setContent(reponseContent);
+            reponse.setDateReponse(new Date());
+            responseRepository.save(reponse);
+
+            sendNotificationEmail(ticket.getUtilisateur(), status, reponseContent);
+        }
+    }
+
+    private void sendNotificationEmail(Utilisateur utilisateur, TypeStatus status, String reponseContent) {
+        String subject = "Ticket " + (status == TypeStatus.EN_COURS ? "en cours" : "résolu");
+        String body = "Votre ticket a été " + (status == TypeStatus.EN_COURS ? "pris en charge" : "résolu") + ".\n\nRéponse : " + reponseContent;
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(utilisateur.getEmail());
+        message.setSubject(subject);
+        message.setText(body);
+
+        mailSender.send(message);
+    }
+
 }

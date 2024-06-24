@@ -6,11 +6,15 @@ import com.odk.assistantticket.model.Ticket;
 import com.odk.assistantticket.model.Utilisateur;
 import com.odk.assistantticket.repository.NotificationRepository;
 import com.odk.assistantticket.repository.TicketRepository;
+import com.odk.assistantticket.repository.UtilisateurRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,6 +23,9 @@ public class NotificationService {
 
     private NotificationRepository notificationRepository;
     private TicketRepository ticketRepository;
+    private JavaMailSender mailSender;
+    private UtilisateurRepository utilisateurRepository;
+    private EmailService emailService;
 
     public Iterable<Notification> listAllNotifications() {
         return notificationRepository.findAll();
@@ -28,8 +35,27 @@ public class NotificationService {
         return notificationRepository.findById(id);
     }
 
-    public void insertNotification(Notification notification) {
+    public void insertNotification( Ticket ticket,String content) {
+        Notification notification = new Notification();
+        notification.setContent(content);
+        notification.setDateEnvoie(new Date());
+        notification.setTicket(ticket);
         notificationRepository.save(notification);
+        // Récupère l'utilisateur authentifié
+        Utilisateur utilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        notification.setUtilisateur(utilisateur);
+
+        // Récupérer les utilisateurs avec le rôle "FORM"
+        List<Utilisateur> formateurs = utilisateurRepository.findByRoleLibelle("FORMATEUR");
+
+        // Envoyer un e-mail à chaque formateur
+        for (Utilisateur formateur : formateurs) {
+            emailService.sendSimpleEmail(
+                    formateur.getEmail(),
+                    "Nouvelle Notification",
+                    content
+            );
+        }
     }
 
     //Modification Notification

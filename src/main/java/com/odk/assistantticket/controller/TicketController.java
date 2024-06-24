@@ -1,5 +1,6 @@
 package com.odk.assistantticket.controller;
 
+import com.odk.assistantticket.enums.TypeStatus;
 import com.odk.assistantticket.model.Categorie;
 import com.odk.assistantticket.model.Ticket;
 import com.odk.assistantticket.service.TicketService;
@@ -47,5 +48,12 @@ public class TicketController {
     @DeleteMapping("/{id}")
     public void deleteTicket(@PathVariable long id) {
         this.ticketService.supprimerTicket(id);
+    }
+
+
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("traiter/{id}")
+    public void traiterTicket(@PathVariable Long id, @RequestBody TypeStatus status, @RequestBody String reponseContent) {
+        ticketService.traiterTicket(id, status, reponseContent);
     }
 }

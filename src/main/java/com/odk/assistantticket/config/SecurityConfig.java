@@ -35,7 +35,14 @@ public class SecurityConfig {
                         .authorizeHttpRequests(auth ->{
                             auth.requestMatchers(POST,"/inscription", "/connexion").permitAll();
                             auth.requestMatchers(POST,"/categorie").hasRole("ADMIN");
-                            auth.requestMatchers(POST,"/ticket").hasRole("ADMIN");
+                            auth.requestMatchers(POST,"/ticket").permitAll();
+                            auth.requestMatchers(POST,"/ticket/traiter/*").permitAll();
+                            auth.requestMatchers(GET,"/role/*").permitAll();
+                            auth.requestMatchers(GET,"/ticket/*").permitAll();
+                            auth.requestMatchers(POST,"/role").permitAll();
+                            auth.requestMatchers(DELETE,"/role/delete/**").permitAll();
+                            auth.requestMatchers(PUT,"/role/*").hasRole("ADMIN");
+
                             auth.anyRequest().authenticated();
                                 }
                         )

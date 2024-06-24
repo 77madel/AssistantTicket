@@ -2,6 +2,7 @@ package com.odk.assistantticket.controller;
 
 import com.odk.assistantticket.model.Categorie;
 import com.odk.assistantticket.model.Notification;
+import com.odk.assistantticket.model.Ticket;
 import com.odk.assistantticket.service.NotificationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,8 +34,8 @@ public class NotificationController {
 
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PostMapping
-    public void save(@RequestBody Notification notification) {
-        notificationService.insertNotification(notification);
+    public void save(@RequestBody Notification notification, Ticket ticket, String content) {
+        notificationService.insertNotification(ticket, content);
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)
