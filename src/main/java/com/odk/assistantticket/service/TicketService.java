@@ -143,7 +143,7 @@ public class TicketService {
 
     private void sendNotificationEmail(Utilisateur utilisateur, String status, String reponseContent) {
         String subject = "Ticket " + (status.equals("EN_COURS") ? "en cours" : "résolu");
-        String body = "Votre ticket a été " + (status.equals("RESOLU") ? "pris en charge" : "résolu") + ".\n\nRéponse : " + reponseContent;
+        String body = "Votre ticket a été " + (status.equals("RESOLU") ? "pris en charge par le Formateur" + " " + utilisateur.getName()  : "résolu") + ".\n\nRéponse : " + reponseContent;
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(utilisateur.getEmail());

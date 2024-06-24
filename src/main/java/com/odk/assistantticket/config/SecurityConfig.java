@@ -33,18 +33,13 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
                 httpSecurity
                         .authorizeHttpRequests(auth ->{
-                            auth.requestMatchers(POST,"/inscription", "/role").hasRole("ADMIN");
-                            auth.requestMatchers(POST,"/categorie").hasRole("ADMIN");
-                            auth.requestMatchers(POST,"/ticket").hasRole("APPRENANT");
-                            auth.requestMatchers(POST,"/ticket/traiter/**").hasRole("FORMATEUR");
-                            auth.requestMatchers(GET,"/role/*").hasRole("ADMIN");
-                            auth.requestMatchers(GET,"/ticket/*").permitAll();
-                            auth.requestMatchers(GET,"/utilisateur/**").hasRole("ADMIN");
-                            auth.requestMatchers(DELETE,"/delete/utilisateur/*").permitAll();
-                            auth.requestMatchers(POST,"/role").hasRole("ADMIN");
-                            auth.requestMatchers(POST,"/priorite").hasRole("ADMIN");
-                            auth.requestMatchers(DELETE,"/role/delete/**").hasRole("ADMINISTRATEUR");
-                            auth.requestMatchers(PUT,"/role/*").hasRole("ADMINISTRATEUR");
+                            auth.requestMatchers(POST,"/inscription", "/role","/priorite","/categorie").hasRole("ADMIN");
+                            auth.requestMatchers(GET,"/utilisateur/**","/ticket/**","/role/**","/priorite/**").hasRole("ADMIN");
+                            auth.requestMatchers(DELETE,"/delete/utilisateur/**","/role/delete/**","/priorite/**").hasRole("ADMIN");
+                            auth.requestMatchers(PUT,"/role/**").hasRole("ADMIN");
+
+                            auth.requestMatchers(POST,"/ticket").hasRole("APPRE");
+                            auth.requestMatchers(POST,"/ticket/traiter/**").hasRole("FORM");
                             auth.requestMatchers(POST,"/connexion").permitAll();
 
                             auth.anyRequest().authenticated();
