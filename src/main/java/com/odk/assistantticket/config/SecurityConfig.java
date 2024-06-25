@@ -33,13 +33,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
                 httpSecurity
                         .authorizeHttpRequests(auth ->{
-                            auth.requestMatchers(POST,"/inscription", "/role","/priorite","/categorie").hasRole("ADMIN");
-                            auth.requestMatchers(GET,"/utilisateur/**","/ticket/**","/role/**","/priorite/**").hasRole("ADMIN");
-                            auth.requestMatchers(DELETE,"/delete/utilisateur/**","/role/delete/**","/priorite/**").hasRole("ADMIN");
-                            auth.requestMatchers(PUT,"/role/**").hasRole("ADMIN");
+                            auth.requestMatchers(POST,"/inscription", "/role","/priorite","/categorie", "/basedeconnaissance").hasRole("ADMIN");
+                            auth.requestMatchers(GET,"/utilisateur/**","/ticket/**","/role/**","/priorite/**", "/basedeconnaissance/**").hasRole("ADMIN");
+                            auth.requestMatchers(DELETE,"/delete/utilisateur/**","/role/delete/**","/priorite/**","/basedeconnaissance/**").hasRole("ADMIN");
+                            auth.requestMatchers(PUT,"/role/**","/basedeconnaissance/**","/categorie/**", "/priorite/**").hasRole("ADMIN");
 
                             auth.requestMatchers(POST,"/ticket").hasRole("APPRE");
+                            auth.requestMatchers(GET,"/basedeconnaissance").hasRole("APPRE");
+
                             auth.requestMatchers(POST,"/ticket/traiter/**").hasRole("FORM");
+                            auth.requestMatchers(GET,"/ticket", "/basedeconnaissance").hasRole("FORM");
                             auth.requestMatchers(POST,"/connexion").permitAll();
 
                             auth.anyRequest().authenticated();

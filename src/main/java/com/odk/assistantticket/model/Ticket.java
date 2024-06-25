@@ -36,7 +36,7 @@ public class Ticket {
     private Utilisateur utilisateur;
 
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE})
-    @JoinColumn(name = "locked_by_id")
+    @JoinColumn(name = "traitement_by_id")
     private Utilisateur lockedBy;
 
 }
