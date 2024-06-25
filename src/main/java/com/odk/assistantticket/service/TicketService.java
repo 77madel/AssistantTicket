@@ -6,6 +6,7 @@ import com.odk.assistantticket.model.*;
 import com.odk.assistantticket.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.logging.Logger;
 
 import static com.odk.assistantticket.enums.TypeStatus.EN_COURS;
 
@@ -115,14 +117,22 @@ public class TicketService {
             Utilisateur currentUtilisateur = (Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
             // Vérifiez si le ticket est déjà verrouillé par un autre utilisateur
-            if (ticket.getUtilisateur() != null && !ticket.getUtilisateur().equals(currentUtilisateur)) {
+            if (ticket.getLockedBy() != null && !ticket.getLockedBy().equals(currentUtilisateur)) {
                 throw new IllegalStateException("Ce ticket est déjà en cours de traitement par un autre formateur.");
             }
-
-            // Verrouillez le ticket par l'utilisateur actuel
-            ticket.setUtilisateur(currentUtilisateur);
+                // Verrouillez le ticket par l'utilisateur actuel si ce n'est pas déjà fait
+            if (ticket.getLockedBy() == null) {
+                ticket.setLockedBy(currentUtilisateur);
+            }
             ticket.setStatus(status);
+
+            // Mettre à jour la date de résolution si le statut est "résolu"
+            if ("RESOLU".equalsIgnoreCase(status)) {
+                ticket.setResoluDate(new Date());
+            }
+
             ticketRepository.save(ticket);
+
 
             Reponse reponse = new Reponse();
             reponse.setTicket(ticket);
@@ -134,8 +144,8 @@ public class TicketService {
             sendNotificationEmail(ticket.getUtilisateur(), status, reponseContent);
 
             // Déverrouillez le ticket après traitement (optionnel)
-            ticket.setUtilisateur(null);
-            ticketRepository.save(ticket);
+            //ticket.setLockedBy(null);
+            //ticketRepository.save(ticket);
         } else {
             throw new NoSuchElementException("Ticket non trouvé.");
         }

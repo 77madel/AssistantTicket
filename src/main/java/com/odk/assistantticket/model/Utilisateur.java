@@ -2,6 +2,7 @@ package com.odk.assistantticket.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.*;
 
+@Builder
 @Slf4j
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,7 +27,7 @@ public class Utilisateur implements UserDetails{
     private String name;
     private String email;
     private String password;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE})
     private Role role;
 
 

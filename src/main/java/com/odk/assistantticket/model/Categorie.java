@@ -17,7 +17,7 @@ public class Categorie {
     private int id;
     @Enumerated(EnumType.STRING)
     private TypeCategorie name;
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE})
     @JoinColumn(name = "utilisateur_id")
     private Utilisateur utilisateur;
 

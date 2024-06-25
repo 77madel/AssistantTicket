@@ -3,6 +3,10 @@ package com.odk.assistantticket.controller;
 import com.odk.assistantticket.dto.AuthentificationDTO;
 import com.odk.assistantticket.model.Utilisateur;
 import com.odk.assistantticket.service.UtilisateurService;
+import io.swagger.v3.oas.annotations.OpenAPI31;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -22,12 +26,15 @@ import java.util.Optional;
 @RestController
 //@RequestMapping("/api/utilisateurs")
 @AllArgsConstructor
+@Tag(name = "ADMINISTRATEUR", description = "Api des gestion des Utilisateurs")
 public class UtilisateurController {
 
     private final UtilisateurService utilisateurService;
     private final AuthenticationManager authenticationManager;
 
     @PostMapping("/inscription")
+    @Operation(summary = "Inscription des utilisateur", description = "Cette fonction permet aux admins de creer des utilisation")
+
     public ResponseEntity<String> inscriptionUtilisateur(@RequestBody Utilisateur utilisateur) {
         utilisateurService.inscription(utilisateur);
         return ResponseEntity.ok("Utilisateur inscrit avec succès !");
@@ -35,23 +42,27 @@ public class UtilisateurController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/utilisateur")
+    @Operation(summary = "Liste des Utilisateurs", description = "Liste de tous les Utilisateurs")
     public Iterable<Utilisateur> AllUtilisateurs() {
         return utilisateurService.listUtilisateur();
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/utilisateur/{id}")
+    @Operation(summary = "Liste des Utilisateurs par Id", description = "Liste des Utilisateurs par leur Id")
     public Optional<Utilisateur> utilisateursById(@PathVariable int id) {
         return utilisateurService.utilisateurById(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/delete/utilisateur/{id}")
+    @Operation(summary = "Fonction pour supprimer un Utilisateur", description = "Supprimer un Utilisateur par son Id")
     public void utilisateurSupprimer(@PathVariable int id) {
         utilisateurService.supprimerUtilisateur(id);
     }
 
     @PostMapping("/connexion")
+    @Operation(summary = "Connexion", description = "Authentication des Utilisations")
     public ResponseEntity<String> connexion(@RequestBody AuthentificationDTO authentificationDTO) {
         try {
             Authentication authenticate = authenticationManager.authenticate(
@@ -67,6 +78,7 @@ public class UtilisateurController {
     }
 
     @GetMapping("/deconnexion")
+    @Operation(summary = "Detruire une Session Utilisateur", description = "Deconnecter Un Utilisateur")
     public ResponseEntity<String> deconnexion(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {

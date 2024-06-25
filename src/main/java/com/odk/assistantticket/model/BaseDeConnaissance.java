@@ -17,6 +17,6 @@ public class BaseDeConnaissance {
     private Long id;
     private String name;
     private String link;
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private Utilisateur utilisateur;
 }

@@ -25,16 +25,18 @@ public class Ticket {
     private String status;
     private Date createDate = new Date();
     private Date resoluDate;
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE})
     @JoinColumn(name = "categorie_id")
     private Categorie categorie;
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE})
     @JoinColumn(name = "priorite_id")
     private Priorite priorite;
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE})
     @JoinColumn(name = "utilisateur_id")
     private Utilisateur utilisateur;
-    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
-    private List<Reponse> reponses;
+
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE})
+    @JoinColumn(name = "locked_by_id")
+    private Utilisateur lockedBy;
 
 }
