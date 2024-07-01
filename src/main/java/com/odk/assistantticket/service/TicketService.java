@@ -47,7 +47,7 @@ public class TicketService {
         Ticket savedTicket = ticketRepository.save(ticket);
 
         // Créer une notification pour le ticket
-        createNotificationForUser(savedTicket, "Nouveau ticket créé" + "par" + " " + utilisateur.getName() + " " + "Veuillez consuler s'il vous plait" );
+        createNotificationForUser(savedTicket, "Nouveau ticket créé par" + " " + utilisateur.getName() + " " + "Veuillez consuler s'il vous plait" );
     }
 
     private void createNotificationForUser(Ticket ticket, String content) {
